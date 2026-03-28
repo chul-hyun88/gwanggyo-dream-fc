@@ -190,6 +190,18 @@
     <div class="scroll-hint">← 좌우로 스크롤 →</div>
   </div>
 
+  <div class="chart-box full" style="margin-bottom:12px;">
+    <div class="chart-title">월별 비용항목별 상세</div>
+    <div class="table-wrap">
+      <table class="data-table" id="monthlyExpDetailTable">
+        <thead><tr id="monthlyExpDetailHead"><th>월</th></tr></thead>
+        <tbody></tbody>
+        <tfoot><tr id="monthlyExpDetailFoot"><td>합계</td></tr></tfoot>
+      </table>
+    </div>
+    <div class="scroll-hint">← 좌우로 스크롤 →</div>
+  </div>
+
   <div class="chart-box full">
     <div class="chart-title">비용 항목별 상세</div>
     <div class="table-wrap">
@@ -207,7 +219,7 @@
 
 <script>
 // ===== 데이터 영역 (이 부분만 업데이트하면 대시보드가 갱신됩니다) =====
-const DATA = {"totalIncome": 15025673, "totalExpense": 2979880, "lastBalance": 12050793, "memberCount": 48, "ilsiCount": 37, "bunapCount": 32, "months": ["1월", "2월", "3월"], "monthlyIncome": {"1월": 14179665, "2월": 366008, "3월": 480000}, "monthlyExpense": {"1월": 1390690, "2월": 1312360, "3월": 276830}, "categoryExpense": {"구장비": 1502400, "선물": 491500, "물, 간식 등": 461430, "신규회원": 137000, "비품": 115650, "수상": 100000, "구장예약감사": 80000, "기타": 51900, "회비": 40000}, "monthlyCategoryExpense": {"1월": {"구장비": 486200, "물, 간식 등": 344490, "선물": 491500, "신규회원": 68500}, "2월": {"구장비": 1016200, "물, 간식 등": 50660, "비품": 27000, "수상": 100000, "구장예약감사": 10000, "신규회원": 68500, "회비": 40000}, "3월": {"물, 간식 등": 66280, "구장예약감사": 70000, "기타": 51900, "비품": 88650}}, "incomeByType": {"회비": 9140000, "전년 이월": 5669049, "가입비": 200000, "유니폼, 바람막이": 15000, "입출금 이자": 1624}, "updateDate": "2026-03-28"};
+const DATA = {"totalIncome": 15025673, "totalExpense": 2989880, "lastBalance": 12040793, "memberCount": 48, "ilsiCount": 37, "bunapCount": 32, "months": ["1월", "2월", "3월"], "monthlyIncome": {"1월": 14179665, "2월": 366008, "3월": 480000}, "monthlyExpense": {"1월": 1390690, "2월": 1312360, "3월": 286830}, "categoryExpense": {"구장비": 1502400, "선물": 491500, "물, 간식 등": 461430, "신규회원": 137000, "비품": 115650, "수상": 100000, "구장예약감사": 80000, "기타": 61900, "회비": 40000}, "monthlyCategoryExpense": {"1월": {"구장비": 486200, "물, 간식 등": 344490, "선물": 491500, "신규회원": 68500}, "2월": {"구장비": 1016200, "물, 간식 등": 50660, "비품": 27000, "수상": 100000, "구장예약감사": 10000, "신규회원": 68500, "회비": 40000}, "3월": {"물, 간식 등": 66280, "구장예약감사": 70000, "기타": 61900, "비품": 88650}}, "incomeByType": {"회비": 9140000, "전년 이월": 5669049, "가입비": 200000, "유니폼, 바람막이": 15000, "입출금 이자": 1624}, "updateDate": "2026-03-28"};
 // ===== 데이터 영역 끝 =====
 
 const COLORS = ['#3182ce','#e53e3e','#38a169','#d69e2e','#805ad5','#dd6b20','#319795','#d53f8c','#718096','#b83280'];
@@ -325,6 +337,32 @@ function render() {
   });
   const tN=tI-tE;
   tfoot.innerHTML = `<td>합계</td><td>${fmt(tI)}</td><td>${fmt(tE)}</td><td class="${tN>=0?'positive':'negative'}">${fmtSign(tN)}</td><td>${fmt(rB)}</td>`;
+
+  // Monthly expense detail table (months as rows, categories as columns)
+  const gTmed = Object.values(d.categoryExpense).reduce((a,b)=>a+b,0);
+  const medH = document.getElementById('monthlyExpDetailHead');
+  const medB = document.querySelector('#monthlyExpDetailTable tbody');
+  const medF = document.getElementById('monthlyExpDetailFoot');
+  medH.innerHTML = '<th>월</th>';
+  sortC.forEach(cat => { medH.innerHTML += `<th>${cat}</th>`; });
+  medH.innerHTML += '<th>합계</th>';
+  medF.innerHTML = '<td>합계</td>';
+  const catTots = {};
+  months.forEach(m => {
+    const mData = d.monthlyCategoryExpense[m] || {};
+    let rowTotal = 0;
+    let cells = `<td>${m}</td>`;
+    sortC.forEach(cat => {
+      const v = mData[cat] || 0;
+      rowTotal += v;
+      catTots[cat] = (catTots[cat] || 0) + v;
+      cells += `<td>${v > 0 ? fmt(v) : '-'}</td>`;
+    });
+    cells += `<td style="font-weight:600">${fmt(rowTotal)}</td>`;
+    medB.innerHTML += `<tr>${cells}</tr>`;
+  });
+  sortC.forEach(cat => { medF.innerHTML += `<td>${fmt(catTots[cat] || 0)}</td>`; });
+  medF.innerHTML += `<td style="font-weight:700">${fmt(gTmed)}</td>`;
 
   // Expense table
   const eH=document.getElementById('expenseTableHead'), eB=document.querySelector('#expenseTable tbody'), eF=document.getElementById('expenseTableFoot');
