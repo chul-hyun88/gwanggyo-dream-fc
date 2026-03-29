@@ -35,7 +35,7 @@
   .chart-title{font-size:14px;font-weight:600;color:#2d3748;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid #edf2f7;}
   .chart-container{position:relative;height:260px;}
   .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -16px;padding:0 16px;}
-  .data-table{width:100%;border-collapse:collapse;font-size:13px;white-space:nowrap;}  #txTable{white-space:normal;}
+  .data-table{width:100%;border-collapse:collapse;font-size:13px;white-space:nowrap;}
   .data-table th{background:#f7fafc;padding:10px 12px;text-align:right;font-weight:600;color:#4a5568;border-bottom:2px solid #e2e8f0;position:sticky;top:0;}
   .data-table th:first-child{text-align:left;position:sticky;left:0;z-index:2;background:#f7fafc;}
   .data-table td{padding:10px 12px;text-align:right;border-bottom:1px solid #edf2f7;color:#4a5568;}
@@ -47,15 +47,15 @@
   .data-table tfoot td{font-weight:700;border-top:2px solid #e2e8f0;background:#f7fafc;color:#2d3748;}
   .data-table tfoot td:first-child{background:#f7fafc;}
   .scroll-hint{font-size:10px;color:#a0aec0;text-align:right;margin-top:4px;display:none;}
-  .footer{text-align:center;padding:20px;color:#a0aec0;font-size:11px;}
+  /* 날짜 그룹 스타일 */
+  #txTable{white-space:normal;}
   .date-group-row{background:#edf2f7!important;}
   .date-group-row td{font-weight:700;color:#2d3748;border-bottom:2px solid #cbd5e0!important;padding:9px 12px!important;border-top:1px solid #cbd5e0!important;}
+  .date-group-row td:first-child{background:#edf2f7!important;}
+  .date-group-row:hover td{background:#e2e8f0!important;}
   .sub-row td{font-size:12px;color:#4a5568;padding:7px 12px 7px 20px!important;border-bottom:1px solid #f0f4f8!important;}
-  @media(max-width:768px){
-    #txTable th, #txTable td{padding:7px 6px!important;font-size:11px!important;}
-    #txTable .date-group-row td{padding:8px 6px!important;}
-    #txTable .sub-row td{padding:5px 6px 5px 10px!important;font-size:11px!important;}
-  }
+  .sub-row td:first-child{background:white!important;font-weight:400;}
+  .footer{text-align:center;padding:20px;color:#a0aec0;font-size:11px;}
   @media(min-width:769px){
     .header{padding:24px 32px;} .header h1{font-size:22px;}
     .container{padding:24px;}
@@ -67,6 +67,9 @@
   @media(max-width:768px){
     .header{flex-direction:column;gap:8px;text-align:center;}
     .scroll-hint{display:block;}
+    #txTable th,#txTable td{padding:7px 6px!important;font-size:11px!important;}
+    #txTable .date-group-row td{padding:8px 6px!important;}
+    #txTable .sub-row td{padding:5px 6px 5px 10px!important;}
   }
 </style>
 </head>
@@ -86,18 +89,26 @@
     <div class="chart-box"><div class="chart-title">비용 항목별 현황</div><div class="chart-container"><canvas id="expensePieChart"></canvas></div></div>
     <div class="chart-box"><div class="chart-title">월별 수입 vs 비용</div><div class="chart-container"><canvas id="monthlyBarChart"></canvas></div></div>
     <div class="chart-box"><div class="chart-title">누적 잔액 추이</div><div class="chart-container"><canvas id="balanceLineChart"></canvas></div></div>
-    <div class="chart-box"><div class="chart-title">월별 비용 항목 구성</div><div class="chart-container"><canvas id="monthlyExpenseStackChart"></canvas></div></div>
+    <div class="chart-box"><div class="chart-title">월별 비용항목별 추이</div><div class="chart-container"><canvas id="monthlyExpenseStackChart"></canvas></div></div>
   </div>
   <div class="chart-box full" style="margin-bottom:12px;"><div class="chart-title">월별 비용항목별 상세</div><div class="table-wrap"><table class="data-table" id="monthlyExpDetailTable"><thead><tr id="monthlyExpDetailHead"><th>월</th></tr></thead><tbody></tbody><tfoot><tr id="monthlyExpDetailFoot"><td>합계</td></tr></tfoot></table></div><div class="scroll-hint">좌우로 스크롤</div></div>
   <div class="chart-box full" style="margin-bottom:12px;"><div class="chart-title">비용 항목별 상세</div><div class="table-wrap"><table class="data-table" id="expenseTable"><thead><tr id="expenseTableHead"><th>항목</th></tr></thead><tbody></tbody><tfoot><tr id="expenseTableFoot"><td>합계</td></tr></tfoot></table></div><div class="scroll-hint">좌우로 스크롤</div></div>
   <div class="chart-box full" style="margin-bottom:12px;"><div class="chart-title">월별 수지 상세</div><div class="table-wrap"><table class="data-table" id="monthlyTable"><thead><tr><th>월</th><th>수입</th><th>비용</th><th>수지</th><th>누적잔액</th></tr></thead><tbody></tbody><tfoot><tr><td>합계</td><td>-</td><td>-</td><td>-</td><td>-</td></tr></tfoot></table></div><div class="scroll-hint">좌우로 스크롤</div></div>
-  <div class="chart-box full" style="margin-bottom:12px;"><div class="chart-title">날짜별 수입/비용 내역</div><div class="table-wrap"><table class="data-table" id="txTable"><thead><tr id="txHead"><th>월</th><th>날짜</th><th style="text-align:left;">분류</th><th>수입</th><th>비용</th><th>잔액</th></tr></thead><tbody></tbody><tfoot><tr id="txFoot"><td>합계</td><td></td><td></td><td id="txIncTotal">-</td><td id="txExpTotal">-</td><td></td></tr></tfoot></table></div><div class="scroll-hint">좌우로 스크롤</div></div>
+  <div class="chart-box full" style="margin-bottom:12px;">
+    <div class="chart-title">날짜별 수입/비용 내역</div>
+    <div class="table-wrap">
+      <table class="data-table" id="txTable">
+        <thead><tr id="txHead"><th>월</th><th>날짜</th><th style="text-align:left;">분류</th><th>수입</th><th>비용</th><th>잔액</th></tr></thead>
+        <tbody></tbody>
+        <tfoot><tr id="txFoot"><td>합계</td><td></td><td></td><td id="txIncTotal">-</td><td id="txExpTotal">-</td><td></td></tr></tfoot>
+      </table>
+    </div>
+    <div class="scroll-hint">좌우로 스크롤</div>
+  </div>
 </div>
 <div class="footer">광교드림FC 회계 대시보드</div>
 <script>
-// ===== 데이터 영역 (이 부분만 업데이트하면 대시보드가 갱신됩니다) =====
 const DATA = {"totalIncome": 15026460, "totalExpense": 3079880, "lastBalance": 11951580, "memberCount": 48, "ilsiCount": 37, "bunapCount": 32, "months": ["1월", "2월", "3월"], "monthlyIncome": {"1월": 14179665, "2월": 366008, "3월": 480787}, "monthlyExpense": {"1월": 1390690, "2월": 1312360, "3월": 376830}, "categoryExpense": {"구장비": 1502400, "선물": 491500, "물, 간식 등": 461430, "신규회원": 137000, "비품": 115650, "수상": 100000, "경조사": 100000, "구장예약감사": 80000, "기타": 51900, "회비": 40000}, "monthlyCategoryExpense": {"1월": {"구장비": 486200, "물, 간식 등": 344490, "선물": 491500, "신규회원": 68500}, "2월": {"구장비": 1016200, "물, 간식 등": 50660, "비품": 27000, "수상": 100000, "구장예약감사": 10000, "신규회원": 68500, "회비": 40000}, "3월": {"물, 간식 등": 66280, "구장예약감사": 70000, "기타": 51900, "비품": 88650, "경조사": 100000}}, "incomeByType": {"회비": 9140000, "전년 이월": 5669049, "가입비": 200000, "유니폼, 바람막이": 15000, "입출금 통장 이자": 2411}, "transactions": [{"월": "1월", "날짜": "01/02", "분류": "전년 이월", "내용": "25년 잔여 회비 이월", "수입": 5669049, "비용": 0}, {"월": "1월", "날짜": "01/02", "분류": "회비", "내용": "26년 1월 회비 납부 (이재영)", "수입": 20000, "비용": 0}, {"월": "1월", "날짜": "01/02", "분류": "회비", "내용": "26년 1월 회비 납부 (김영찬)", "수입": 25000, "비용": 0}, {"월": "1월", "날짜": "01/02", "분류": "회비", "내용": "26년 회비 일시납 납부 (윤재민)", "수입": 240000, "비용": 0}, {"월": "1월", "날짜": "01/02", "분류": "회비", "내용": "26년 회비 일시납 납부 (이경훈)", "수입": 240000, "비용": 0}, {"월": "1월", "날짜": "01/02", "분류": "회비", "내용": "26년 회비 일시납 납부 (안정식)", "수입": 240000, "비용": 0}, {"월": "1월", "날짜": "01/02", "분류": "회비", "내용": "26년 회비 일시납 납부 (이재현)", "수입": 240000, "비용": 0}, {"월": "1월", "날짜": "01/02", "분류": "회비", "내용": "26년 회비 일시납 납부 (이현승)", "수입": 240000, "비용": 0}, {"월": "1월", "날짜": "01/02", "분류": "회비", "내용": "26년 회비 일시납 납부 (정재문)", "수입": 150000, "비용": 0}, {"월": "1월", "날짜": "01/02", "분류": "회비", "내용": "26년 회비 일시납 납부 (조재연)", "수입": 240000, "비용": 0}, {"월": "1월", "날짜": "01/02", "분류": "회비", "내용": "26년 회비 일시납 납부 (백승혁)", "수입": 240000, "비용": 0}, {"월": "1월", "날짜": "01/02", "분류": "회비", "내용": "26년 회비 일시납 납부 (천욱래)", "수입": 240000, "비용": 0}, {"월": "1월", "날짜": "01/02", "분류": "회비", "내용": "26년 회비 일시납 납부 (조윤재)", "수입": 240000, "비용": 0}, {"월": "1월", "날짜": "01/02", "분류": "회비", "내용": "26년 회비 일시납 납부 (박성우)", "수입": 150000, "비용": 0}, {"월": "1월", "날짜": "01/02", "분류": "회비", "내용": "26년 회비 일시납 납부 (남영준)", "수입": 240000, "비용": 0}, {"월": "1월", "날짜": "01/02", "분류": "회비", "내용": "26년 회비 일시납 납부 (조경민)", "수입": 240000, "비용": 0}, {"월": "1월", "날짜": "01/02", "분류": "회비", "내용": "26년 회비 일시납 납부 (이동준)", "수입": 240000, "비용": 0}, {"월": "1월", "날짜": "01/02", "분류": "회비", "내용": "26년 1월 회비 납부 (문지훈)", "수입": 5000, "비용": 0}, {"월": "1월", "날짜": "01/02", "분류": "회비", "내용": "26년 회비 일시납 납부 (김형태)", "수입": 240000, "비용": 0}, {"월": "1월", "날짜": "01/02", "분류": "회비", "내용": "26년 회비 일시납 납부 (이세민)", "수입": 150000, "비용": 0}, {"월": "1월", "날짜": "01/02", "분류": "회비", "내용": "26년 회비 일시납 납부 (임홍백)", "수입": 150000, "비용": 0}, {"월": "1월", "날짜": "01/04", "분류": "회비", "내용": "26년 회비 일시납 납부 (이동훈)", "수입": 240000, "비용": 0}, {"월": "1월", "날짜": "01/06", "분류": "회비", "내용": "26년 1월 회비 납부 (이재영)", "수입": 5000, "비용": 0}, {"월": "1월", "날짜": "01/06", "분류": "회비", "내용": "26년 회비 일시납 납부 (김영하)", "수입": 240000, "비용": 0}, {"월": "1월", "날짜": "01/06", "분류": "회비", "내용": "26년 회비 일시납 납부 (석주원)", "수입": 240000, "비용": 0}, {"월": "1월", "날짜": "01/06", "분류": "회비", "내용": "26년 회비 일시납 납부 (박종화)", "수입": 240000, "비용": 0}, {"월": "1월", "날짜": "01/06", "분류": "회비", "내용": "26년 회비 일시납 납부 (도현우)", "수입": 240000, "비용": 0}, {"월": "1월", "날짜": "01/06", "분류": "구장비", "내용": "1/4(일) 수원 월드컵 경기장 예약", "수입": 0, "비용": 241000}, {"월": "1월", "날짜": "01/07", "분류": "회비", "내용": "26년 회비 일시납 납부 (이상태)", "수입": 150000, "비용": 0}, {"월": "1월", "날짜": "01/07", "분류": "물, 간식 등", "내용": "신년 떡값", "수입": 0, "비용": 105000}, {"월": "1월", "날짜": "01/07", "분류": "선물", "내용": "26년 신년 장갑 선물", "수입": 0, "비용": 491500}, {"월": "1월", "날짜": "01/07", "분류": "물, 간식 등", "내용": "26년 신년 커피", "수입": 0, "비용": 80300}, {"월": "1월", "날짜": "01/08", "분류": "구장비", "내용": "1/4(일) 수원 월드컵 경기장 차액 이체", "수입": 0, "비용": 2100}, {"월": "1월", "날짜": "01/08", "분류": "구장비", "내용": "1/11(일) 수원 월드컵 경기장 예약", "수입": 0, "비용": 243100}, {"월": "1월", "날짜": "01/11", "분류": "회비", "내용": "26년 회비 일시납 납부 (최명원)", "수입": 240000, "비용": 0}, {"월": "1월", "날짜": "01/11", "분류": "물, 간식 등", "내용": "1/11(일) 경기 물 구입", "수입": 0, "비용": 21820}, {"월": "1월", "날짜": "01/12", "분류": "회비", "내용": "26년 회비 일시납 납부 (최승연)", "수입": 240000, "비용": 0}, {"월": "1월", "날짜": "01/14", "분류": "회비", "내용": "26년 회비 일시납 납부 (임진혁)", "수입": 150000, "비용": 0}, {"월": "1월", "날짜": "01/15", "분류": "회비", "내용": "26년 회비 일시납 납부 (오영일)", "수입": 250000, "비용": 0}, {"월": "1월", "날짜": "01/15", "분류": "물, 간식 등", "내용": "26년 물, 간식 구입", "수입": 0, "비용": 72270}, {"월": "1월", "날짜": "01/15", "분류": "물, 간식 등", "내용": "26년 컵라면, 커피 등 구입", "수입": 0, "비용": 50160}, {"월": "1월", "날짜": "01/18", "분류": "회비", "내용": "26년 회비 일시납 납부 (김태수)", "수입": 240000, "비용": 0}, {"월": "1월", "날짜": "01/20", "분류": "회비", "내용": "26년 회비 일시납 납부 (윤현재)", "수입": 240000, "비용": 0}, {"월": "1월", "날짜": "01/23", "분류": "회비", "내용": "26년 회비 일시납 납부 (김문창)", "수입": 240000, "비용": 0}, {"월": "1월", "날짜": "01/24", "분류": "입출금 통장 이자", "내용": "입출금 통장 이자", "수입": 616, "비용": 0}, {"월": "1월", "날짜": "01/25", "분류": "물, 간식 등", "내용": "26년 컵라면 구입", "수입": 0, "비용": 14940}, {"월": "1월", "날짜": "01/25", "분류": "회비", "내용": "26년 회비 일시납 납부 (안정환)", "수입": 240000, "비용": 0}, {"월": "1월", "날짜": "01/26", "분류": "회비", "내용": "26년 1월 회비 납부 (김원종)", "수입": 20000, "비용": 0}, {"월": "1월", "날짜": "01/26", "분류": "회비", "내용": "26년 회비 일시납 납부 (김선철)", "수입": 215000, "비용": 0}, {"월": "1월", "날짜": "01/26", "분류": "가입비", "내용": "신규회원 가입비(김선철)", "수입": 100000, "비용": 0}, {"월": "1월", "날짜": "01/26", "분류": "신규회원", "내용": "26년 1월 신규회원 유니폼, 조끼 (김선철)", "수입": 0, "비용": 68500}, {"월": "1월", "날짜": "01/27", "분류": "회비", "내용": "26년 회비 일시납 납부 (김도연)", "수입": 240000, "비용": 0}, {"월": "1월", "날짜": "01/29", "분류": "회비", "내용": "26년 회비 일시납 납부 (박웅택)", "수입": 240000, "비용": 0}, {"월": "1월", "날짜": "01/30", "분류": "회비", "내용": "26년 회비 일시납 납부 (이한빈)", "수입": 240000, "비용": 0}, {"월": "1월", "날짜": "01/30", "분류": "회비", "내용": "26년 회비 일시납 납부 (김대성)", "수입": 250000, "비용": 0}, {"월": "1월", "날짜": "01/31", "분류": "회비", "내용": "26년 회비 일시납 납부 (임석균)", "수입": 240000, "비용": 0}, {"월": "2월", "날짜": "02/01", "분류": "회비", "내용": "26년 2월 회비 납부 (문지훈)", "수입": 25000, "비용": 0}, {"월": "2월", "날짜": "02/02", "분류": "회비", "내용": "26년 2월 회비 납부 (이재영)", "수입": 25000, "비용": 0}, {"월": "2월", "날짜": "02/04", "분류": "구장비", "내용": "2/1(일) 수원 월드컵 경기장 예약", "수입": 0, "비용": 243100}, {"월": "2월", "날짜": "02/07", "분류": "물, 간식 등", "내용": "26년 에너지바 구입", "수입": 0, "비용": 21520}, {"월": "2월", "날짜": "02/10", "분류": "구장비", "내용": "2/8(일) 수원 월드컵 경기장 예약", "수입": 0, "비용": 243100}, {"월": "2월", "날짜": "02/02", "분류": "회비", "내용": "26년 2월 회비 납부 (김영찬)", "수입": 25000, "비용": 0}, {"월": "2월", "날짜": "02/14", "분류": "비품", "내용": "26년 겨울 핫팩 구입", "수입": 0, "비용": 27000}, {"월": "2월", "날짜": "02/14", "분류": "물, 간식 등", "내용": "26년 커피(카누) 구입", "수입": 0, "비용": 22890}, {"월": "2월", "날짜": "02/14", "분류": "수상", "내용": "25년 12월 이달의 선수(유선호)", "수입": 0, "비용": 20000}, {"월": "2월", "날짜": "02/14", "분류": "수상", "내용": "26년 1월 이달의 선수(김영하)", "수입": 0, "비용": 20000}, {"월": "2월", "날짜": "02/14", "분류": "수상", "내용": "25년 근태왕 (정재문, 김형태)", "수입": 0, "비용": 40000}, {"월": "2월", "날짜": "02/16", "분류": "회비", "내용": "26년 1월 회비 납부 (김민기)", "수입": 20000, "비용": 0}, {"월": "2월", "날짜": "02/24", "분류": "회비", "내용": "26년 2월 회비 납부 (김원종)", "수입": 20000, "비용": 0}, {"월": "2월", "날짜": "02/24", "분류": "가입비", "내용": "신규회원 가입비(박준영)", "수입": 100000, "비용": 0}, {"월": "2월", "날짜": "02/28", "분류": "입출금 통장 이자", "내용": "입출금 통장 이자", "수입": 1008, "비용": 0}, {"월": "2월", "날짜": "03/01", "분류": "회비", "내용": "26년 3월 회비 납부 (문지훈)", "수입": 25000, "비용": 0}, {"월": "2월", "날짜": "03/01", "분류": "회비", "내용": "26년 3월 회비 납부 (김영찬)", "수입": 25000, "비용": 0}, {"월": "2월", "날짜": "03/03", "분류": "회비", "내용": "26년 3월 회비 납부 (이재영)", "수입": 25000, "비용": 0}, {"월": "2월", "날짜": "03/03", "분류": "구장비", "내용": "26년 광교중 사용료", "수입": 0, "비용": 530000}, {"월": "2월", "날짜": "03/03", "분류": "구장예약감사", "내용": "26년 3월 구장 예약 감사 선물", "수입": 0, "비용": 10000}, {"월": "2월", "날짜": "03/03", "분류": "수상", "내용": "26년 2월 이달의 선수(조윤재)", "수입": 0, "비용": 20000}, {"월": "2월", "날짜": "03/04", "분류": "신규회원", "내용": "26년 2월 신규회원 유니폼, 조끼 (박준영)", "수입": 0, "비용": 68500}, {"월": "2월", "날짜": "03/04", "분류": "회비", "내용": "26년 회비 추가 납부분 환급 (25만원 납부)", "수입": 0, "비용": 10000}, {"월": "2월", "날짜": "03/04", "분류": "회비", "내용": "26년 회비 추가 납부분 환급 (25만원 납부)", "수입": 0, "비용": 10000}, {"월": "2월", "날짜": "03/04", "분류": "회비", "내용": "26년 회비 추가 납부분 환급 (25만원 납부)", "수입": 0, "비용": 10000}, {"월": "2월", "날짜": "03/05", "분류": "회비", "내용": "26년 회비 환급분 남철현에게 전달 (개인 물품 대신 구매로 남철현에게 전달)", "수입": 0, "비용": 10000}, {"월": "2월", "날짜": "03/08", "분류": "물, 간식 등", "내용": "26년 컵라면 구읍", "수입": 0, "비용": 6250}, {"월": "2월", "날짜": "03/13", "분류": "회비", "내용": "26년 1월 회비 납부 (김동권)", "수입": 25000, "비용": 0}, {"월": "2월", "날짜": "03/13", "분류": "회비", "내용": "26년 2월 회비 납부 (김동권)", "수입": 25000, "비용": 0}, {"월": "2월", "날짜": "03/13", "분류": "회비", "내용": "26년 3월 회비 납부 (김동권)", "수입": 25000, "비용": 0}, {"월": "3월", "날짜": "03/20", "분류": "회비", "내용": "26년 1월 회비 납부 (블랜차드)", "수입": 25000, "비용": 0}, {"월": "3월", "날짜": "03/20", "분류": "회비", "내용": "26년 2월 회비 납부 (블랜차드)", "수입": 25000, "비용": 0}, {"월": "3월", "날짜": "03/20", "분류": "회비", "내용": "26년 3월 회비 납부 (블랜차드)", "수입": 25000, "비용": 0}, {"월": "3월", "날짜": "03/20", "분류": "회비", "내용": "26년 4월 회비 납부 (블랜차드)", "수입": 25000, "비용": 0}, {"월": "3월", "날짜": "03/21", "분류": "물, 간식 등", "내용": "26년 물, 간식 구입", "수입": 0, "비용": 37490}, {"월": "3월", "날짜": "03/22", "분류": "유니폼, 바람막이", "내용": "문지훈 회원 바람막이 비용 입금", "수입": 15000, "비용": 0}, {"월": "3월", "날짜": "03/22", "분류": "회비", "내용": "26년 1월 회비 납부 (정한빛)", "수입": 25000, "비용": 0}, {"월": "3월", "날짜": "03/22", "분류": "회비", "내용": "26년 2월 회비 납부 (정한빛)", "수입": 25000, "비용": 0}, {"월": "3월", "날짜": "03/22", "분류": "회비", "내용": "26년 3월 회비 납부 (정한빛)", "수입": 25000, "비용": 0}, {"월": "3월", "날짜": "03/22", "분류": "구장예약감사", "내용": "4월 경기장 예약 감사 쿠폰(김영하, 전영준, 박종화, 유선호, 이상호, 이경훈, 안정식)", "수입": 0, "비용": 70000}, {"월": "3월", "날짜": "03/22", "분류": "물, 간식 등", "내용": "26년 물, 간식 구입", "수입": 0, "비용": 28790}, {"월": "3월", "날짜": "03/22", "분류": "회비", "내용": "26년 1월 회비 납부 (조종섭)", "수입": 25000, "비용": 0}, {"월": "3월", "날짜": "03/22", "분류": "회비", "내용": "26년 2월 회비 납부 (조종섭)", "수입": 25000, "비용": 0}, {"월": "3월", "날짜": "03/22", "분류": "회비", "내용": "26년 3월 회비 납부 (조종섭)", "수입": 25000, "비용": 0}, {"월": "3월", "날짜": "03/22", "분류": "회비", "내용": "26년 4월 회비 납부 (조종섭)", "수입": 25000, "비용": 0}, {"월": "3월", "날짜": "03/22", "분류": "회비", "내용": "김원종 회원 1월, 2월 회비 차액 추가 납부", "수입": 10000, "비용": 0}, {"월": "3월", "날짜": "03/22", "분류": "회비", "내용": "김민기 회원 1월 회비 차액 추가 납부", "수입": 5000, "비용": 0}, {"월": "3월", "날짜": "03/22", "분류": "회비", "내용": "김민기 회원 회비 차액 추가 납부", "수입": 25000, "비용": 0}, {"월": "3월", "날짜": "03/22", "분류": "회비", "내용": "김민기 회원 3월 회비", "수입": 5000, "비용": 0}, {"월": "3월", "날짜": "03/22", "분류": "회비", "내용": "김민기 회원 3월 회비 차액 추가 납부", "수입": 20000, "비용": 0}, {"월": "3월", "날짜": "03/22", "분류": "회비", "내용": "26년 3월 회비 납부 (박준영)", "수입": 25000, "비용": 0}, {"월": "3월", "날짜": "03/24", "분류": "회비", "내용": "26년 3월 회비 납부 (김원종)", "수입": 25000, "비용": 0}, {"월": "3월", "날짜": "03/24", "분류": "회비", "내용": "26년 1월 회비 납부 (정상혁)", "수입": 25000, "비용": 0}, {"월": "3월", "날짜": "03/24", "분류": "회비", "내용": "26년 2월 회비 납부 (정상혁)", "수입": 25000, "비용": 0}, {"월": "3월", "날짜": "03/24", "분류": "회비", "내용": "26년 3월 회비 납부 (정상혁)", "수입": 25000, "비용": 0}, {"월": "3월", "날짜": "03/26", "분류": "기타", "내용": "3/26 운영진 회의", "수입": 0, "비용": 51900}, {"월": "3월", "날짜": "03/26", "분류": "비품", "내용": "공가방 2개 구입", "수입": 0, "비용": 88650}, {"월": "3월", "날짜": "03/28", "분류": "입출금 통장 이자", "내용": "입출금 통장 이자", "수입": 787, "비용": 0}, {"월": "3월", "날짜": "03/28", "분류": "경조사", "내용": "이경훈 회원 본인 결혼 축의금", "수입": 0, "비용": 100000}], "updateDate": "2026-03-29"};
-// ===== 데이터 영역 끝 =====
 var COLORS=['#3182ce','#e53e3e','#38a169','#d69e2e','#805ad5','#dd6b20','#319795','#d53f8c','#718096','#b83280'];
 var isMobile=window.innerWidth<=768;
 function fmt(n){if(!n&&n!==0)return'-';return Math.abs(Math.round(n)).toLocaleString('ko-KR')+'원';}
@@ -117,13 +128,13 @@ function render(){
   document.getElementById('memberCount').textContent=d.memberCount+'명';
   document.getElementById('memberDetail').textContent='일시납 '+d.ilsiCount+' / 분납 '+d.bunapCount;
   var catE=Object.entries(d.categoryExpense);
-  new Chart(document.getElementById('expensePieChart'),{type:'doughnut',data:{labels:catE.map(function(e){return e[0];}),datasets:[{data:catE.map(function(e){return e[1];}),backgroundColor:COLORS.slice(0,catE.length),borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:isMobile?'bottom':'right',labels:{font:{family:'Noto Sans KR',size:isMobile?11:12},padding:isMobile?8:12,boxWidth:isMobile?10:40}},tooltip:{callbacks:{label:function(ctx){var t=ctx.dataset.data.reduce(function(a,b){return a+b;},0);return ctx.label+': '+fmt(ctx.raw)+' ('+(ctx.raw/t*100).toFixed(1)+'%)';}}}}}});
-  new Chart(document.getElementById('monthlyBarChart'),{type:'bar',data:{labels:months,datasets:[{label:'수입',data:months.map(function(m){return d.monthlyIncome[m]||0;}),backgroundColor:'#3182ce44',borderColor:'#3182ce',borderWidth:1.5,borderRadius:4},{label:'비용',data:months.map(function(m){return d.monthlyExpense[m]||0;}),backgroundColor:'#e53e3e44',borderColor:'#e53e3e',borderWidth:1.5,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{family:'Noto Sans KR',size:isMobile?11:12}}},tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+': '+fmt(ctx.raw);}}}},scales:{y:{beginAtZero:true,ticks:{callback:function(v){return fmtShort(v);},font:{size:isMobile?10:11}},grid:{color:'#edf2f7'}},x:{grid:{display:false},ticks:{font:{size:isMobile?11:12}}}}}});
-  var cum=0,bals=months.map(function(m){cum+=(d.monthlyIncome[m]||0)-(d.monthlyExpense[m]||0);return cum;});
-  new Chart(document.getElementById('balanceLineChart'),{type:'line',data:{labels:months,datasets:[{label:'누적 잔액',data:bals,borderColor:'#38a169',backgroundColor:'#38a16922',fill:true,tension:0.3,pointRadius:5,pointBackgroundColor:'#38a169',borderWidth:2.5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return '잔액: '+fmt(ctx.raw);}}}},scales:{y:{ticks:{callback:function(v){return fmtShort(v);},font:{size:isMobile?10:11}},grid:{color:'#edf2f7'}},x:{grid:{display:false},ticks:{font:{size:isMobile?11:12}}}}}});
   var allCats=[];Object.values(d.monthlyCategoryExpense).forEach(function(o){Object.keys(o).forEach(function(k){if(allCats.indexOf(k)<0)allCats.push(k);});});
   var sortC=allCats.sort(function(a,b){return(d.categoryExpense[b]||0)-(d.categoryExpense[a]||0);});
-  new Chart(document.getElementById('monthlyExpenseStackChart'),{type:'bar',data:{labels:months,datasets:sortC.map(function(c,i){return{label:c,data:months.map(function(m){return(d.monthlyCategoryExpense[m]||{})[c]||0;}),backgroundColor:COLORS[i%COLORS.length]+'99',borderColor:COLORS[i%COLORS.length],borderWidth:1};})},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:isMobile?'bottom':'top',labels:{font:{family:'Noto Sans KR',size:isMobile?10:11},boxWidth:isMobile?8:12,padding:isMobile?6:10}},tooltip:{callbacks:{label:function(ctx){return ctx.raw>0?ctx.dataset.label+': '+fmt(ctx.raw):'';}}}},scales:{x:{stacked:true,grid:{display:false},ticks:{font:{size:isMobile?11:12}}},y:{stacked:true,ticks:{callback:function(v){return fmtShort(v);},font:{size:isMobile?10:11}},grid:{color:'#edf2f7'}}}}});
+  try{new Chart(document.getElementById('expensePieChart'),{type:'doughnut',data:{labels:catE.map(function(e){return e[0];}),datasets:[{data:catE.map(function(e){return e[1];}),backgroundColor:COLORS.slice(0,catE.length),borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:isMobile?'bottom':'right',labels:{font:{family:'Noto Sans KR',size:isMobile?11:12},padding:isMobile?8:12,boxWidth:isMobile?10:40}},tooltip:{callbacks:{label:function(ctx){var t=ctx.dataset.data.reduce(function(a,b){return a+b;},0);return ctx.label+': '+fmt(ctx.raw)+' ('+(ctx.raw/t*100).toFixed(1)+'%)';}}}}}});}catch(e){}
+  try{new Chart(document.getElementById('monthlyBarChart'),{type:'bar',data:{labels:months,datasets:[{label:'수입',data:months.map(function(m){return d.monthlyIncome[m]||0;}),backgroundColor:'#3182ce44',borderColor:'#3182ce',borderWidth:1.5,borderRadius:4},{label:'비용',data:months.map(function(m){return d.monthlyExpense[m]||0;}),backgroundColor:'#e53e3e44',borderColor:'#e53e3e',borderWidth:1.5,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{family:'Noto Sans KR',size:isMobile?11:12}}},tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+': '+fmt(ctx.raw);}}}},scales:{y:{beginAtZero:true,ticks:{callback:function(v){return fmtShort(v);},font:{size:isMobile?10:11}},grid:{color:'#edf2f7'}},x:{grid:{display:false},ticks:{font:{size:isMobile?11:12}}}}}});}catch(e){}
+  var cum=0,bals=months.map(function(m){cum+=(d.monthlyIncome[m]||0)-(d.monthlyExpense[m]||0);return cum;});
+  try{new Chart(document.getElementById('balanceLineChart'),{type:'line',data:{labels:months,datasets:[{label:'누적 잔액',data:bals,borderColor:'#38a169',backgroundColor:'#38a16922',fill:true,tension:0.3,pointRadius:5,pointBackgroundColor:'#38a169',borderWidth:2.5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return '잔액: '+fmt(ctx.raw);}}}},scales:{y:{ticks:{callback:function(v){return fmtShort(v);},font:{size:isMobile?10:11}},grid:{color:'#edf2f7'}},x:{grid:{display:false},ticks:{font:{size:isMobile?11:12}}}}}});}catch(e){}
+  try{new Chart(document.getElementById('monthlyExpenseStackChart'),{type:'bar',data:{labels:months,datasets:sortC.map(function(c,i){return{label:c,data:months.map(function(m){return(d.monthlyCategoryExpense[m]||{})[c]||0;}),backgroundColor:COLORS[i%COLORS.length]+'99',borderColor:COLORS[i%COLORS.length],borderWidth:1};})},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:isMobile?'bottom':'top',labels:{font:{family:'Noto Sans KR',size:isMobile?10:11},boxWidth:isMobile?8:12,padding:isMobile?6:10}},tooltip:{callbacks:{label:function(ctx){return ctx.raw>0?ctx.dataset.label+': '+fmt(ctx.raw):'';}}}},scales:{x:{stacked:true,grid:{display:false},ticks:{font:{size:isMobile?11:12}}},y:{stacked:true,ticks:{callback:function(v){return fmtShort(v);},font:{size:isMobile?10:11}},grid:{color:'#edf2f7'}}}}});}catch(e){}
   var gTmed=Object.values(d.categoryExpense).reduce(function(a,b){return a+b;},0);
   var medH=document.getElementById('monthlyExpDetailHead'),medB=document.querySelector('#monthlyExpDetailTable tbody'),medF=document.getElementById('monthlyExpDetailFoot');
   medH.innerHTML='<th>월</th>';sortC.forEach(function(c){medH.innerHTML+='<th>'+c+'</th>';});medH.innerHTML+='<th>합계</th>';
@@ -138,57 +149,44 @@ function render(){
   var tB=document.querySelector('#monthlyTable tbody'),tF=document.querySelector('#monthlyTable tfoot tr'),tI=0,tE=0,rB=0;
   months.forEach(function(m){var inc=d.monthlyIncome[m]||0,exp=d.monthlyExpense[m]||0,net=inc-exp;rB+=net;tI+=inc;tE+=exp;tB.innerHTML+='<tr><td>'+m+'</td><td>'+fmt(inc)+'</td><td>'+fmt(exp)+'</td><td class="'+(net>=0?'positive':'negative')+'">'+fmtSign(net)+'</td><td>'+fmt(rB)+'</td></tr>';});
   var tN=tI-tE;tF.innerHTML='<td>합계</td><td>'+fmt(tI)+'</td><td>'+fmt(tE)+'</td><td class="'+(tN>=0?'positive':'negative')+'">'+fmtSign(tN)+'</td><td>'+fmt(rB)+'</td>';
-  // 날짜별 그룹핑 (펼치기 없이 바로 표시)
-  var txList=d.transactions||[],txB=document.querySelector('#txTable tbody'),runBal=0,totInc=0,totExp=0;
-  var dateGroups=[];var dateMap={};
+  // 날짜별 그룹핑
+  var txList=d.transactions||[],txB2=document.querySelector('#txTable tbody'),runBal=0,totInc=0,totExp=0;
+  var dateGroups=[],dateMap={};
   txList.forEach(function(r){
     var key=r['월']+'|'+r['날짜'];
     if(!dateMap[key]){dateMap[key]={월:r['월'],날짜:r['날짜'],수입:0,비용:0,rows:[]};dateGroups.push(dateMap[key]);}
     dateMap[key].수입+=(r['수입']||0);dateMap[key].비용+=(r['비용']||0);dateMap[key].rows.push(r);
   });
-  dateGroups.forEach(function(g){
-    runBal+=g.수입-g.비용;totInc+=g.수입;totExp+=g.비용;
-    var iC=g.수입>0?'<td class="positive">'+fmt(g.수입)+'</td>':'<td style="color:#a0aec0">-</td>';
-    var eC=g.비용>0?'<td class="negative">'+fmt(g.비용)+'</td>':'<td style="color:#a0aec0">-</td>';
-    // 날짜 소계 행
-    txB.innerHTML+='<tr class="date-group-row"><td>'+g.월+'</td><td>'+g.날짜+'</td><td style="color:#718096;font-size:11px;text-align:left;font-weight:400">'+g.rows.length+'건</td>'+iC+eC+'<td>'+fmt(runBal)+'</td></tr>';
-    // 세부 내역 바로 표시
-    g.rows.forEach(function(r){
-      var ri=r['수입']>0?'<td class="positive">'+fmt(r['수입'])+'</td>':'<td style="color:#a0aec0">-</td>';
-      var re2=r['비용']>0?'<td class="negative">'+fmt(r['비용'])+'</td>':'<td style="color:#a0aec0">-</td>';
-      txB.innerHTML+='<tr class="sub-row"><td></td><td></td><td style="text-align:left;color:#718096">'+r['분류']+'</td>'+ri+re2+'<td></td></tr>';
-    });
-  });
-  // 모바일(4컬럼) / 데스크탑(6컬럼) 분기
+  // 모바일: 4컬럼(날짜/수입/비용/잔액), 데스크탑: 6컬럼(월/날짜/분류/수입/비용/잔액)
   if(isMobile){
     document.getElementById('txHead').innerHTML='<th>날짜</th><th>수입</th><th>비용</th><th>잔액</th>';
     document.getElementById('txFoot').innerHTML='<td>합계</td><td id="txIncTotal">-</td><td id="txExpTotal">-</td><td></td>';
   }
   dateGroups.forEach(function(g){
-    runBal+=g.수입-g.비용;totInc+=g.수입;totExp+=g.비용;
+    runBal+=g.수입-g.비용; totInc+=g.수입; totExp+=g.비용;
     if(isMobile){
-      var iC=g.수입>0?'<td class="positive">'+fmtShort(g.수입)+'</td>':'<td style="color:#a0aec0">-</td>';
-      var eC=g.비용>0?'<td class="negative">'+fmtShort(g.비용)+'</td>':'<td style="color:#a0aec0">-</td>';
-      txB.innerHTML+='<tr class="date-group-row"><td>'+g.날짜+'</td>'+iC+eC+'<td>'+fmtShort(runBal)+'</td></tr>';
+      var iC=g.수입>0?'<td class="positive">'+fmt(g.수입)+'</td>':'<td style="color:#a0aec0">-</td>';
+      var eC=g.비용>0?'<td class="negative">'+fmt(g.비용)+'</td>':'<td style="color:#a0aec0">-</td>';
+      txB2.innerHTML+='<tr class="date-group-row"><td>'+g.날짜+'</td>'+iC+eC+'<td>'+fmt(runBal)+'</td></tr>';
       g.rows.forEach(function(r){
         var hasInc=r['수입']>0;
         var aCls=hasInc?'positive':'negative';
-        var aStr=(hasInc?'+':'-')+fmtShort(hasInc?r['수입']:r['비용']);
-        txB.innerHTML+='<tr class="sub-row"><td colspan="3" style="text-align:left;color:#718096;padding-left:12px!important">'+r['분류']+'</td><td class="'+aCls+'" style="white-space:nowrap">'+aStr+'</td></tr>';
+        var aStr=(hasInc?'+':'-')+fmt(hasInc?r['수입']:r['비용']);
+        txB2.innerHTML+='<tr class="sub-row"><td colspan="3" style="text-align:left;color:#718096;padding-left:12px!important">'+r['분류']+'</td><td class="'+aCls+'" style="white-space:nowrap">'+aStr+'</td></tr>';
       });
     } else {
       var iC=g.수입>0?'<td class="positive">'+fmt(g.수입)+'</td>':'<td style="color:#a0aec0">-</td>';
       var eC=g.비용>0?'<td class="negative">'+fmt(g.비용)+'</td>':'<td style="color:#a0aec0">-</td>';
-      txB.innerHTML+='<tr class="date-group-row"><td>'+g.월+'</td><td>'+g.날짜+'</td><td style="color:#718096;font-size:11px;text-align:left;font-weight:400">'+g.rows.length+'건</td>'+iC+eC+'<td>'+fmt(runBal)+'</td></tr>';
+      txB2.innerHTML+='<tr class="date-group-row"><td>'+g.월+'</td><td>'+g.날짜+'</td><td style="color:#718096;font-size:11px;text-align:left;font-weight:400">'+g.rows.length+'건</td>'+iC+eC+'<td>'+fmt(runBal)+'</td></tr>';
       g.rows.forEach(function(r){
         var ri=r['수입']>0?'<td class="positive">'+fmt(r['수입'])+'</td>':'<td style="color:#a0aec0">-</td>';
         var re2=r['비용']>0?'<td class="negative">'+fmt(r['비용'])+'</td>':'<td style="color:#a0aec0">-</td>';
-        txB.innerHTML+='<tr class="sub-row"><td></td><td></td><td style="text-align:left;color:#718096">'+r['분류']+'</td>'+ri+re2+'<td></td></tr>';
+        txB2.innerHTML+='<tr class="sub-row"><td></td><td></td><td style="text-align:left;color:#718096">'+r['분류']+'</td>'+ri+re2+'<td></td></tr>';
       });
     }
   });
-  document.getElementById('txIncTotal').textContent=isMobile?fmtShort(totInc):fmt(totInc);
-  document.getElementById('txExpTotal').textContent=isMobile?fmtShort(totExp):fmt(totExp);
+  document.getElementById('txIncTotal').textContent=fmt(totInc);
+  document.getElementById('txExpTotal').textContent=fmt(totExp);
 }
 document.addEventListener('DOMContentLoaded',render);
 </script>
