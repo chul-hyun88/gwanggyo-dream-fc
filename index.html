@@ -35,7 +35,7 @@
   .chart-title{font-size:14px;font-weight:600;color:#2d3748;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid #edf2f7;}
   .chart-container{position:relative;height:260px;}
   .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -16px;padding:0 16px;}
-  .data-table{width:100%;border-collapse:collapse;font-size:13px;white-space:nowrap;}
+  .data-table{width:100%;border-collapse:collapse;font-size:13px;white-space:nowrap;}  #txTable{white-space:normal;}
   .data-table th{background:#f7fafc;padding:10px 12px;text-align:right;font-weight:600;color:#4a5568;border-bottom:2px solid #e2e8f0;position:sticky;top:0;}
   .data-table th:first-child{text-align:left;position:sticky;left:0;z-index:2;background:#f7fafc;}
   .data-table td{padding:10px 12px;text-align:right;border-bottom:1px solid #edf2f7;color:#4a5568;}
@@ -51,6 +51,11 @@
   .date-group-row{background:#edf2f7!important;}
   .date-group-row td{font-weight:700;color:#2d3748;border-bottom:2px solid #cbd5e0!important;padding:9px 12px!important;border-top:1px solid #cbd5e0!important;}
   .sub-row td{font-size:12px;color:#4a5568;padding:7px 12px 7px 20px!important;border-bottom:1px solid #f0f4f8!important;}
+  @media(max-width:768px){
+    #txTable th, #txTable td{padding:7px 6px!important;font-size:11px!important;}
+    #txTable .date-group-row td{padding:8px 6px!important;}
+    #txTable .sub-row td{padding:5px 6px 5px 10px!important;font-size:11px!important;}
+  }
   @media(min-width:769px){
     .header{padding:24px 32px;} .header h1{font-size:22px;}
     .container{padding:24px;}
@@ -86,7 +91,7 @@
   <div class="chart-box full" style="margin-bottom:12px;"><div class="chart-title">월별 비용항목별 상세</div><div class="table-wrap"><table class="data-table" id="monthlyExpDetailTable"><thead><tr id="monthlyExpDetailHead"><th>월</th></tr></thead><tbody></tbody><tfoot><tr id="monthlyExpDetailFoot"><td>합계</td></tr></tfoot></table></div><div class="scroll-hint">좌우로 스크롤</div></div>
   <div class="chart-box full" style="margin-bottom:12px;"><div class="chart-title">비용 항목별 상세</div><div class="table-wrap"><table class="data-table" id="expenseTable"><thead><tr id="expenseTableHead"><th>항목</th></tr></thead><tbody></tbody><tfoot><tr id="expenseTableFoot"><td>합계</td></tr></tfoot></table></div><div class="scroll-hint">좌우로 스크롤</div></div>
   <div class="chart-box full" style="margin-bottom:12px;"><div class="chart-title">월별 수지 상세</div><div class="table-wrap"><table class="data-table" id="monthlyTable"><thead><tr><th>월</th><th>수입</th><th>비용</th><th>수지</th><th>누적잔액</th></tr></thead><tbody></tbody><tfoot><tr><td>합계</td><td>-</td><td>-</td><td>-</td><td>-</td></tr></tfoot></table></div><div class="scroll-hint">좌우로 스크롤</div></div>
-  <div class="chart-box full" style="margin-bottom:12px;"><div class="chart-title">날짜별 수입/비용 내역</div><div class="table-wrap"><table class="data-table" id="txTable"><thead><tr><th>월</th><th>날짜</th><th style="text-align:left;">분류</th><th>수입</th><th>비용</th><th>잔액</th></tr></thead><tbody></tbody><tfoot><tr><td>합계</td><td></td><td></td><td id="txIncTotal">-</td><td id="txExpTotal">-</td><td></td></tr></tfoot></table></div><div class="scroll-hint">좌우로 스크롤</div></div>
+  <div class="chart-box full" style="margin-bottom:12px;"><div class="chart-title">날짜별 수입/비용 내역</div><div class="table-wrap"><table class="data-table" id="txTable"><thead><tr id="txHead"><th>월</th><th>날짜</th><th style="text-align:left;">분류</th><th>수입</th><th>비용</th><th>잔액</th></tr></thead><tbody></tbody><tfoot><tr id="txFoot"><td>합계</td><td></td><td></td><td id="txIncTotal">-</td><td id="txExpTotal">-</td><td></td></tr></tfoot></table></div><div class="scroll-hint">좌우로 스크롤</div></div>
 </div>
 <div class="footer">광교드림FC 회계 대시보드</div>
 <script>
@@ -154,10 +159,37 @@ function render(){
       txB.innerHTML+='<tr class="sub-row"><td></td><td></td><td style="text-align:left;color:#718096">'+r['분류']+'</td>'+ri+re2+'<td></td></tr>';
     });
   });
-  document.getElementById('txIncTotal').textContent=fmt(totInc);
-  document.getElementById('txExpTotal').textContent=fmt(totExp);
+  // 모바일(4컬럼) / 데스크탑(6컬럼) 분기
+  if(isMobile){
+    document.getElementById('txHead').innerHTML='<th>날짜</th><th>수입</th><th>비용</th><th>잔액</th>';
+    document.getElementById('txFoot').innerHTML='<td>합계</td><td id="txIncTotal">-</td><td id="txExpTotal">-</td><td></td>';
+  }
+  dateGroups.forEach(function(g){
+    runBal+=g.수입-g.비용;totInc+=g.수입;totExp+=g.비용;
+    if(isMobile){
+      var iC=g.수입>0?'<td class="positive">'+fmtShort(g.수입)+'</td>':'<td style="color:#a0aec0">-</td>';
+      var eC=g.비용>0?'<td class="negative">'+fmtShort(g.비용)+'</td>':'<td style="color:#a0aec0">-</td>';
+      txB.innerHTML+='<tr class="date-group-row"><td>'+g.날짜+'</td>'+iC+eC+'<td>'+fmtShort(runBal)+'</td></tr>';
+      g.rows.forEach(function(r){
+        var hasInc=r['수입']>0;
+        var aCls=hasInc?'positive':'negative';
+        var aStr=(hasInc?'+':'-')+fmtShort(hasInc?r['수입']:r['비용']);
+        txB.innerHTML+='<tr class="sub-row"><td colspan="3" style="text-align:left;color:#718096;padding-left:12px!important">'+r['분류']+'</td><td class="'+aCls+'" style="white-space:nowrap">'+aStr+'</td></tr>';
+      });
+    } else {
+      var iC=g.수입>0?'<td class="positive">'+fmt(g.수입)+'</td>':'<td style="color:#a0aec0">-</td>';
+      var eC=g.비용>0?'<td class="negative">'+fmt(g.비용)+'</td>':'<td style="color:#a0aec0">-</td>';
+      txB.innerHTML+='<tr class="date-group-row"><td>'+g.월+'</td><td>'+g.날짜+'</td><td style="color:#718096;font-size:11px;text-align:left;font-weight:400">'+g.rows.length+'건</td>'+iC+eC+'<td>'+fmt(runBal)+'</td></tr>';
+      g.rows.forEach(function(r){
+        var ri=r['수입']>0?'<td class="positive">'+fmt(r['수입'])+'</td>':'<td style="color:#a0aec0">-</td>';
+        var re2=r['비용']>0?'<td class="negative">'+fmt(r['비용'])+'</td>':'<td style="color:#a0aec0">-</td>';
+        txB.innerHTML+='<tr class="sub-row"><td></td><td></td><td style="text-align:left;color:#718096">'+r['분류']+'</td>'+ri+re2+'<td></td></tr>';
+      });
+    }
+  });
+  document.getElementById('txIncTotal').textContent=isMobile?fmtShort(totInc):fmt(totInc);
+  document.getElementById('txExpTotal').textContent=isMobile?fmtShort(totExp):fmt(totExp);
 }
-
 document.addEventListener('DOMContentLoaded',render);
 </script>
 </body>
