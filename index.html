@@ -185,4 +185,19 @@ function render(){
       });
     } else {
       var iC=g.수입>0?'<td class="positive">'+fmt(g.수입)+'</td>':'<td style="color:#a0aec0">-</td>';
-      var eC=g.비용>0?'<td class="negative">'+fmt(g.비용)+'</td>':'<td styl
+      var eC=g.비용>0?'<td class="negative">'+fmt(g.비용)+'</td>':'<td style="color:#a0aec0">-</td>';
+      txB2.innerHTML+='<tr class="date-group-row"><td>'+g.월+'</td><td>'+g.날짜+'</td><td style="color:#718096;font-size:11px;text-align:left;font-weight:400">'+g.rows.length+'건</td><td></td>'+iC+eC+'<td>'+fmt(runBal)+'</td></tr>';
+      g.rows.forEach(function(r){
+        var ri=r['수입']>0?'<td class="positive">'+fmt(r['수입'])+'</td>':'<td style="color:#a0aec0">-</td>';
+        var re2=r['비용']>0?'<td class="negative">'+fmt(r['비용'])+'</td>':'<td style="color:#a0aec0">-</td>';
+        txB2.innerHTML+='<tr class="sub-row"><td></td><td></td><td style="text-align:left;color:#718096">'+r['분류']+'</td><td style="text-align:left;color:#4a5568;font-size:11px;white-space:nowrap">'+r['내용']+'</td>'+ri+re2+'<td></td></tr>';
+      });
+    }
+  });
+  document.getElementById('txIncTotal').textContent=fmt(totInc);
+  document.getElementById('txExpTotal').textContent=fmt(totExp);
+}
+document.addEventListener('DOMContentLoaded',render);
+</script>
+</body>
+</html>
