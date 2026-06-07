@@ -87,15 +87,15 @@
   </div>
   <div class="chart-grid">
     <div class="chart-box"><div class="chart-title">비용 항목별 현황</div><div class="chart-container"><canvas id="expensePieChart"></canvas></div></div>
-    <div class="chart-box"><div class="chart-title">월별 수입 vs 비용</div><div class="chart-container"><canvas id="monthlyBarChart"></canvas></div></div>
-    <div class="chart-box"><div class="chart-title">누적 잔액 추이</div><div class="chart-container"><canvas id="balanceLineChart"></canvas></div></div>
-    <div class="chart-box"><div class="chart-title">월별 비용항목별 추이</div><div class="chart-container"><canvas id="monthlyExpenseStackChart"></canvas></div></div>
+    <div class="chart-box"><div class="chart-title">월별 수입 vs 비용 <span style="font-size:11px;font-weight:400;color:#a0aec0">(실 귀속 기준)</span></div><div class="chart-container"><canvas id="monthlyBarChart"></canvas></div></div>
+    <div class="chart-box"><div class="chart-title">누적 잔액 추이 <span style="font-size:11px;font-weight:400;color:#a0aec0">(실제 비용/수익일 기준)</span></div><div class="chart-container"><canvas id="balanceLineChart"></canvas></div></div>
+    <div class="chart-box"><div class="chart-title">월별 비용항목별 추이 <span style="font-size:11px;font-weight:400;color:#a0aec0">(실 귀속 기준)</span></div><div class="chart-container"><canvas id="monthlyExpenseStackChart"></canvas></div></div>
   </div>
-  <div class="chart-box full" style="margin-bottom:12px;"><div class="chart-title">월별 비용항목별 상세</div><div class="table-wrap"><table class="data-table" id="monthlyExpDetailTable"><thead><tr id="monthlyExpDetailHead"><th>월</th></tr></thead><tbody></tbody><tfoot><tr id="monthlyExpDetailFoot"><td>합계</td></tr></tfoot></table></div><div class="scroll-hint">좌우로 스크롤</div></div>
-  <div class="chart-box full" style="margin-bottom:12px;"><div class="chart-title">비용 항목별 상세</div><div class="table-wrap"><table class="data-table" id="expenseTable"><thead><tr id="expenseTableHead"><th>항목</th></tr></thead><tbody></tbody><tfoot><tr id="expenseTableFoot"><td>합계</td></tr></tfoot></table></div><div class="scroll-hint">좌우로 스크롤</div></div>
-  <div class="chart-box full" style="margin-bottom:12px;"><div class="chart-title">월별 수지 상세</div><div class="table-wrap"><table class="data-table" id="monthlyTable"><thead><tr><th>월</th><th>수입</th><th>비용</th><th>수지</th><th>누적잔액</th></tr></thead><tbody></tbody><tfoot><tr><td>합계</td><td>-</td><td>-</td><td>-</td><td>-</td></tr></tfoot></table></div><div class="scroll-hint">좌우로 스크롤</div></div>
+  <div class="chart-box full" style="margin-bottom:12px;"><div class="chart-title">월별 비용항목별 상세 <span style="font-size:11px;font-weight:400;color:#a0aec0">(실 귀속 기준)</span></div><div class="table-wrap"><table class="data-table" id="monthlyExpDetailTable"><thead><tr id="monthlyExpDetailHead"><th>월</th></tr></thead><tbody></tbody><tfoot><tr id="monthlyExpDetailFoot"><td>합계</td></tr></tfoot></table></div><div class="scroll-hint">좌우로 스크롤</div></div>
+  <div class="chart-box full" style="margin-bottom:12px;"><div class="chart-title">비용 항목별 상세 <span style="font-size:11px;font-weight:400;color:#a0aec0">(실 귀속 기준)</span></div><div class="table-wrap"><table class="data-table" id="expenseTable"><thead><tr id="expenseTableHead"><th>항목</th></tr></thead><tbody></tbody><tfoot><tr id="expenseTableFoot"><td>합계</td></tr></tfoot></table></div><div class="scroll-hint">좌우로 스크롤</div></div>
+  <div class="chart-box full" style="margin-bottom:12px;"><div class="chart-title">월별 수지 상세 <span style="font-size:11px;font-weight:400;color:#a0aec0">(실 귀속 기준)</span></div><div class="table-wrap"><table class="data-table" id="monthlyTable"><thead><tr><th>월</th><th>수입</th><th>비용</th><th>수지</th><th>누적잔액</th></tr></thead><tbody></tbody><tfoot><tr><td>합계</td><td>-</td><td>-</td><td>-</td><td>-</td></tr></tfoot></table></div><div class="scroll-hint">좌우로 스크롤</div></div>
   <div class="chart-box full" style="margin-bottom:12px;">
-    <div class="chart-title">날짜별 수입/비용 내역</div>
+    <div class="chart-title">날짜별 수입/비용 내역 <span style="font-size:11px;font-weight:400;color:#a0aec0">(실제 비용/수익일 기준)</span></div>
     <div class="table-wrap">
       <table class="data-table" id="txTable">
         <thead><tr id="txHead"><th>월</th><th>날짜</th><th style="text-align:left;">분류</th><th style="text-align:left;min-width:160px;">내용</th><th>수입</th><th>비용</th><th>잔액</th></tr></thead>
@@ -134,7 +134,8 @@ function render(){
   var sortC=allCats.sort(function(a,b){return(d.categoryExpense[b]||0)-(d.categoryExpense[a]||0);});
   try{new Chart(document.getElementById('expensePieChart'),{type:'doughnut',data:{labels:catE.map(function(e){return e[0];}),datasets:[{data:catE.map(function(e){return e[1];}),backgroundColor:COLORS.slice(0,catE.length),borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:isMobile?'bottom':'right',labels:{font:{family:'Noto Sans KR',size:isMobile?11:12},padding:isMobile?8:12,boxWidth:isMobile?10:40}},tooltip:{callbacks:{label:function(ctx){var t=ctx.dataset.data.reduce(function(a,b){return a+b;},0);return ctx.label+': '+fmt(ctx.raw)+' ('+(ctx.raw/t*100).toFixed(1)+'%)';}}}}}});}catch(e){}
   try{new Chart(document.getElementById('monthlyBarChart'),{type:'bar',data:{labels:months,datasets:[{label:'수입',data:months.map(function(m){return d.monthlyIncome[m]||0;}),backgroundColor:'#3182ce44',borderColor:'#3182ce',borderWidth:1.5,borderRadius:4},{label:'비용',data:months.map(function(m){return d.monthlyExpense[m]||0;}),backgroundColor:'#e53e3e44',borderColor:'#e53e3e',borderWidth:1.5,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{family:'Noto Sans KR',size:isMobile?11:12}}},tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+': '+fmt(ctx.raw);}}}},scales:{y:{beginAtZero:true,ticks:{callback:function(v){return fmtShort(v);},font:{size:isMobile?10:11}},grid:{color:'#edf2f7'}},x:{grid:{display:false},ticks:{font:{size:isMobile?11:12}}}}}});}catch(e){}
-  var cum=0,bals=months.map(function(m){cum+=(d.monthlyIncome[m]||0)-(d.monthlyExpense[m]||0);return cum;});
+  var miA=d.monthlyIncomeActual||d.monthlyIncome,meA=d.monthlyExpenseActual||d.monthlyExpense;
+  var cum=0,bals=months.map(function(m){cum+=(miA[m]||0)-(meA[m]||0);return cum;});
   try{new Chart(document.getElementById('balanceLineChart'),{type:'line',data:{labels:months,datasets:[{label:'누적 잔액',data:bals,borderColor:'#38a169',backgroundColor:'#38a16922',fill:true,tension:0.3,pointRadius:5,pointBackgroundColor:'#38a169',borderWidth:2.5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return '잔액: '+fmt(ctx.raw);}}}},scales:{y:{ticks:{callback:function(v){return fmtShort(v);},font:{size:isMobile?10:11}},grid:{color:'#edf2f7'}},x:{grid:{display:false},ticks:{font:{size:isMobile?11:12}}}}}});}catch(e){}
   try{new Chart(document.getElementById('monthlyExpenseStackChart'),{type:'bar',data:{labels:months,datasets:sortC.map(function(c,i){return{label:c,data:months.map(function(m){return(d.monthlyCategoryExpense[m]||{})[c]||0;}),backgroundColor:COLORS[i%COLORS.length]+'99',borderColor:COLORS[i%COLORS.length],borderWidth:1};})},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:isMobile?'bottom':'top',labels:{font:{family:'Noto Sans KR',size:isMobile?10:11},boxWidth:isMobile?8:12,padding:isMobile?6:10}},tooltip:{callbacks:{label:function(ctx){return ctx.raw>0?ctx.dataset.label+': '+fmt(ctx.raw):'';}}}},scales:{x:{stacked:true,grid:{display:false},ticks:{font:{size:isMobile?11:12}}},y:{stacked:true,ticks:{callback:function(v){return fmtShort(v);},font:{size:isMobile?10:11}},grid:{color:'#edf2f7'}}}}});}catch(e){}
   var gTmed=Object.values(d.categoryExpense).reduce(function(a,b){return a+b;},0);
@@ -184,19 +185,4 @@ function render(){
       });
     } else {
       var iC=g.수입>0?'<td class="positive">'+fmt(g.수입)+'</td>':'<td style="color:#a0aec0">-</td>';
-      var eC=g.비용>0?'<td class="negative">'+fmt(g.비용)+'</td>':'<td style="color:#a0aec0">-</td>';
-      txB2.innerHTML+='<tr class="date-group-row"><td>'+g.월+'</td><td>'+g.날짜+'</td><td style="color:#718096;font-size:11px;text-align:left;font-weight:400">'+g.rows.length+'건</td><td></td>'+iC+eC+'<td>'+fmt(runBal)+'</td></tr>';
-      g.rows.forEach(function(r){
-        var ri=r['수입']>0?'<td class="positive">'+fmt(r['수입'])+'</td>':'<td style="color:#a0aec0">-</td>';
-        var re2=r['비용']>0?'<td class="negative">'+fmt(r['비용'])+'</td>':'<td style="color:#a0aec0">-</td>';
-        txB2.innerHTML+='<tr class="sub-row"><td></td><td></td><td style="text-align:left;color:#718096">'+r['분류']+'</td><td style="text-align:left;color:#4a5568;font-size:11px;white-space:nowrap">'+r['내용']+'</td>'+ri+re2+'<td></td></tr>';
-      });
-    }
-  });
-  document.getElementById('txIncTotal').textContent=fmt(totInc);
-  document.getElementById('txExpTotal').textContent=fmt(totExp);
-}
-document.addEventListener('DOMContentLoaded',render);
-</script>
-</body>
-</html>
+      var eC=g.비용>0?'<td class="negative">'+fmt(g.비용)+'</td>':'<td styl
