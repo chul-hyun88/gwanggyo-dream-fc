@@ -194,4 +194,10 @@ function render(){
       });
     }
   });
-  document.getElementById('txIncTotal').textCont
+  document.getElementById('txIncTotal').textContent=fmt(totInc);
+  document.getElementById('txExpTotal').textContent=fmt(totExp);
+}
+document.addEventListener('DOMContentLoaded',render);
+</script>
+</body>
+</html>
